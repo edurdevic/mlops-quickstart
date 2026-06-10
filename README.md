@@ -44,6 +44,33 @@ Having a *Continuous Deployment (CD)* pipeline enabled means that if you make an
      - If you use Azure DevOps, then you also have to add these 2 parameters as pipeline secrets (**DATABRICKS_CLIENT_ID** and **DATABRICKS_CLIENT_SECRET**), and update the **WORKSPACE_HOST_NAME** variable in the [azure-pipelines.yml](azure_pipelines.yml) file. 
  - For this simple tutorial, we are using the same workspace and service principal for Dev and Prod, for the simplicity of demonstrating it. Make sure to check our documentation for more details on authentication and on how to manage different environments! 
 
+## Dependencies
+
+All Python library versions are pinned in [`requirements.txt`](requirements.txt) at the repo root. Each notebook's first executable cell installs from that single file:
+
+```python
+%pip install -r ../../requirements.txt   # or ../../../ for deployment notebooks
+dbutils.library.restartPython()
+```
+
+To bump a library, change the version once in `requirements.txt` — every notebook and job picks it up automatically. There is no need to edit version pins per notebook anymore.
+
+## Adapt this template with Genie Code
+
+This repo ships with [Genie Code agent skills](https://docs.databricks.com/aws/en/genie-code/skills) under [`.assistant/skills/`](.assistant/skills/) so the Databricks Assistant can walk you through adapting the template to your own data, model, and inference pipelines. Each skill is narrowly scoped — the assistant loads it automatically when relevant:
+
+| Skill | Use when you want to… |
+|-------|----------------------|
+| [`mlops-quickstart-overview`](.assistant/skills/mlops-quickstart-overview/SKILL.md) | Understand the repo structure, parameterization contract, and Challenger/Champion conventions. |
+| [`adapt-data-ingestion`](.assistant/skills/adapt-data-ingestion/SKILL.md) | Replace the Iris dataset with your own source (cloud storage, JDBC, API, Delta, streaming, bronze/silver/gold). |
+| [`adapt-model-training`](.assistant/skills/adapt-model-training/SKILL.md) | Swap the algorithm, features, target, or metrics for a new problem type (regression, clustering, forecasting, …). |
+| [`adapt-model-deployment`](.assistant/skills/adapt-model-deployment/SKILL.md) | Customize the MLflow 3 *evaluate → approve → deploy* pipeline and serving endpoint. |
+| [`adapt-inference`](.assistant/skills/adapt-inference/SKILL.md) | Adapt batch scoring and the realtime serving endpoint to your model and input schema. |
+| [`adapt-bundle-and-cicd`](.assistant/skills/adapt-bundle-and-cicd/SKILL.md) | Adjust `databricks.yml`, job YAMLs, add a staging target, or wire up Azure DevOps / GitHub Actions secrets. |
+| [`manage-dependencies`](.assistant/skills/manage-dependencies/SKILL.md) | Add, pin, upgrade, or troubleshoot Python libraries via `requirements.txt`. |
+
+To use them, the skills must be discoverable from your workspace. Either copy the `.assistant/skills/` folder to your workspace root (`Workspace/.assistant/skills/`) for org-wide access, or to your user folder (`/Users/{username}/.assistant/skills/`) for personal use. See the [Genie Code skills docs](https://docs.databricks.com/aws/en/genie-code/skills) for full details.
+
 ## Learn more
  - Check out the [Big Book of MLOps](https://www.databricks.com/resources/ebook/the-big-book-of-mlops).
  - Here you can find more info on how to manage different environments for MLOps: [MLOps Workflows](https://docs.databricks.com/aws/en/machine-learning/mlops/mlops-workflow).

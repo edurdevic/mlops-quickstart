@@ -1,0 +1,13 @@
+# Pinned dependencies for the Databricks MLOps Quickstart.
+# Each notebook installs these via `%pip install -r ../../requirements.txt`
+# (use `../../../` for notebooks under model_deployment/).
+#
+# Pin only libraries the Databricks Runtime does NOT already ship at a
+# suitable version. Pinning a library that DBR provides (scikit-learn,
+# pandas, requests, numpy, etc.) risks deserialization errors against
+# historical MLflow model artifacts that were saved with the DBR-shipped
+# version. Trust DBR for those, and pin them only if you control the full
+# train/eval/inference chain end-to-end.
+
+mlflow==3.4.0
+databricks-sdk==0.40.0
