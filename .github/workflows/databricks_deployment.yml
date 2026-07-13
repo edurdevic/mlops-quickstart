@@ -7,7 +7,6 @@ on:
       - master
 
 env:
-  DATABRICKS_HOST: ${{ secrets.WORKSPACE_HOST_NAME }}
   PYTHON_VERSION: '3.9'
 
 jobs:
@@ -16,6 +15,10 @@ jobs:
     # To use the default GitHub-hosted runner, comment the line below and uncomment 'ubuntu-latest'
     # runs-on: linux-ubuntu-latest
     runs-on: ubuntu-latest
+    # Environment secrets (dev/prod) are only available when the job declares the environment.
+    environment: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.WORKSPACE_HOST_NAME }}
     outputs:
       target-environment: ${{ steps.environment.outputs.target }}
     
