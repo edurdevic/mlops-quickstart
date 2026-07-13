@@ -15,8 +15,7 @@ jobs:
     # To use the default GitHub-hosted runner, comment the line below and uncomment 'ubuntu-latest'
     # runs-on: linux-ubuntu-latest
     runs-on: ubuntu-latest
-    # Environment secrets (dev/prod) are only available when the job declares the environment.
-    environment: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+    environment: dev
     env:
       DATABRICKS_HOST: ${{ secrets.WORKSPACE_HOST_NAME }}
     outputs:
@@ -94,6 +93,7 @@ jobs:
     # To use the default GitHub-hosted runner, comment the line below and uncomment 'ubuntu-latest'
     # runs-on: linux-ubuntu-latest
     runs-on: ubuntu-latest
+    environment: dev
     needs: deploy
     if: success()
     
