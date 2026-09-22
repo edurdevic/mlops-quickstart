@@ -1,0 +1,69 @@
+resources:
+  jobs:
+    batch_inference_job:
+      name: "3 - Batch Inference Job - ${var.environment}"
+      description: "Score new data using the @champion model and write predictions"
+
+      # TODO: Set up email notifications on failure
+      # email_notifications:
+      #   on_failure:
+      #     - "your.team@company.com"
+      #   no_alert_for_skipped_runs: false
+
+      # Job parameters sourced from bundle variables
+      parameters:
+        - name: "catalog_name"
+          default: "${var.catalog_name}"
+        - name: "schema_name"
+          default: "${var.schema_name}"
+        - name: "model_version"
+          default: "1"
+
+      # Optional: Define shared job cluster (uncomment to use)
+      # If commented out, defaults to serverless compute
+      # job_clusters:
+      #   - job_cluster_key: "inference_cluster"
+      #     new_cluster:
+      #       autoscale:
+      #         min_workers: 1
+      #         max_workers: 4
+      #       spark_version: "15.4.x-scala2.12"
+      #       node_type_id: "i3.xlarge"
+      #       custom_tags:
+      #         Environment: "${var.environment}"
+      #         Project: "your_project_name"  # TODO: Change project name
+      #         Purpose: "batch-inference"
+
+      # Job tasks
+      tasks:
+        - task_key: "run_inference"
+          description: "Score data and write predictions"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "inference_cluster"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your inference notebook is in a different location
+            notebook_path: "../notebooks/3_inference/batch_inference.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+              model_version: "{{job.parameters.model_version}}"
+
+      # Timeout and retry settings
+      timeout_seconds: 3600  # 1 hour
+      max_concurrent_runs: 1
+
+      # Optional: Schedule the job to run on a daily basis
+      # Uncomment and adjust the cron schedule as needed
+      # schedule:
+      #   quartz_cron_expression: "0 2 * * ?"  # Daily at 2 AM
+      #   timezone_id: "UTC"
+      #   pause_status: "UNPAUSED"
+
+      # Tags for organization and filtering
+      tags:
+        Environment: "${var.environment}"
+        Project: "your_project_name"  # TODO: Change project name
+        Stage: "inference"

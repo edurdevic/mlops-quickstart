@@ -1,0 +1,102 @@
+resources:
+  jobs:
+    model_deployment_job:
+      name: "2.2 - Model Deployment Job (Evaluate/Approve/Deploy) - ${var.environment}"
+      description: "MLflow 3 Deployment Pipeline: evaluate → approve → deploy @challenger to @champion"
+
+      # TODO: Set up email notifications on failure
+      # email_notifications:
+      #   on_failure:
+      #     - "your.team@company.com"
+      #   no_alert_for_skipped_runs: false
+
+      # IMPORTANT: This job should be manually triggered after training
+      # or triggered by the training job in a multi-stage pipeline
+
+      # Job parameters sourced from bundle variables
+      parameters:
+        - name: "catalog_name"
+          default: "${var.catalog_name}"
+        - name: "schema_name"
+          default: "${var.schema_name}"
+
+      # Optional: Define shared job cluster (uncomment to use)
+      # If commented out, defaults to serverless compute
+      # job_clusters:
+      #   - job_cluster_key: "deployment_cluster"
+      #     new_cluster:
+      #       autoscale:
+      #         min_workers: 1
+      #         max_workers: 4
+      #       spark_version: "15.4.x-scala2.12"
+      #       node_type_id: "i3.xlarge"
+      #       custom_tags:
+      #         Environment: "${var.environment}"
+      #         Project: "your_project_name"  # TODO: Change project name
+      #         Purpose: "model-deployment"
+
+      # Job tasks - executed in sequence
+      tasks:
+
+        # Task 1: Evaluate
+        - task_key: "evaluate_model"
+          description: "Evaluate @challenger model vs @champion"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "deployment_cluster"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your evaluation notebook is in a different location
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/1_model_evaluation.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+
+        # Task 2: Approval
+        - task_key: "approve_model"
+          description: "Apply business logic to approve or reject @challenger"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "deployment_cluster"
+
+          # This task depends on evaluation completing
+          depends_on:
+            - task_key: "evaluate_model"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your approval notebook is in a different location
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/2_model_approval.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+
+        # Task 3: Deployment
+        - task_key: "deploy_model"
+          description: "Promote @challenger to @champion and create/update serving endpoint"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "deployment_cluster"
+
+          # This task depends on approval completing
+          depends_on:
+            - task_key: "approve_model"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your deployment notebook is in a different location
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/3_model_deployment.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+
+      # Timeout and retry settings
+      timeout_seconds: 3600  # 1 hour
+      max_concurrent_runs: 1
+
+      # Tags for organization and filtering
+      tags:
+        Environment: "${var.environment}"
+        Project: "your_project_name"  # TODO: Change project name
+        Stage: "deployment"

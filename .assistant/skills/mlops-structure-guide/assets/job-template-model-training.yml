@@ -1,0 +1,67 @@
+resources:
+  jobs:
+    model_training_job:
+      name: "2.1 - Model Training Job - ${var.environment}"
+      description: "Job to train a model and register it with @challenger alias"
+
+      # TODO: Set up email notifications on failure
+      # email_notifications:
+      #   on_failure:
+      #     - "your.team@company.com"
+      #   no_alert_for_skipped_runs: false
+
+      # Job depends on data ingestion completing first (optional)
+      # If you have a separate data ingestion job, you can trigger it first:
+      # depends_on:
+      #   - job_key: "data_ingestion_job"
+
+      # Job parameters sourced from bundle variables
+      parameters:
+        - name: "catalog_name"
+          default: "${var.catalog_name}"
+        - name: "schema_name"
+          default: "${var.schema_name}"
+        - name: "model_version"
+          default: "1"
+
+      # Optional: Define shared job cluster (uncomment to use)
+      # If commented out, defaults to serverless compute
+      # job_clusters:
+      #   - job_cluster_key: "training_cluster"
+      #     new_cluster:
+      #       autoscale:
+      #         min_workers: 2
+      #         max_workers: 8
+      #       spark_version: "15.4.x-scala2.12"
+      #       node_type_id: "i3.xlarge"
+      #       custom_tags:
+      #         Environment: "${var.environment}"
+      #         Project: "your_project_name"  # TODO: Change project name
+      #         Purpose: "model-training"
+
+      # Job tasks
+      tasks:
+        - task_key: "train_model"
+          description: "Train model and register with @challenger alias"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "training_cluster"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your training notebook is in a different location
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_training.ipynb"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+              model_version: "{{job.parameters.model_version}}"
+
+      # Timeout and retry settings
+      timeout_seconds: 3600  # 1 hour
+      max_concurrent_runs: 1
+
+      # Tags for organization and filtering
+      tags:
+        Environment: "${var.environment}"
+        Project: "your_project_name"  # TODO: Change project name
+        Stage: "training"
