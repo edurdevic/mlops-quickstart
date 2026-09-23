@@ -1,0 +1,114 @@
+bundle:
+  name: your_project_name  # TODO: Change to your project name
+
+# Include all job YAML files from the resources directory
+include:
+  - resources/*.yml
+
+# Define deployment targets (dev and prod environments)
+targets:
+  dev:
+    mode: development
+    workspace:
+      # TODO: Set your dev workspace URL
+      # host: https://your-workspace.cloud.databricks.com
+
+      # Root path where bundle artifacts will be deployed
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+    # Mark dev as the default target
+    default: true
+
+    # Variables scoped to dev environment
+    variables:
+      # TODO: Set your dev catalog name
+      catalog_name: your_dev_catalog
+
+      # TODO: Set your schema name
+      schema_name: your_schema
+
+      environment: dev
+
+    # Optional: Set permissions for dev environment resources
+    # Uncomment and customize as needed
+    # resources:
+    #   jobs:
+    #     data_ingestion_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #         - level: "CAN_RUN"
+    #           group_name: "Developers"
+    #     model_training_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #         - level: "CAN_RUN"
+    #           group_name: "Developers"
+    #     model_deployment_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #         - level: "CAN_RUN"
+    #           group_name: "PowerUsers"
+    #     batch_inference_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #         - level: "CAN_RUN"
+    #           group_name: "Developers"
+
+  prod:
+    mode: production
+    workspace:
+      # TODO: Set your prod workspace URL (may be different from dev)
+      # host: https://prod-workspace.cloud.databricks.com
+
+      # Root path where bundle artifacts will be deployed
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+
+    # Variables scoped to prod environment
+    variables:
+      # TODO: Set your prod catalog name
+      catalog_name: your_prod_catalog
+
+      # TODO: Set your schema name
+      schema_name: your_schema
+
+      environment: prod
+
+    # Optional: Set stricter permissions for prod environment
+    # Only PowerUsers group can manage/run prod jobs
+    # Uncomment and customize as needed
+    # resources:
+    #   jobs:
+    #     data_ingestion_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #     model_training_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #     model_deployment_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+    #     batch_inference_job:
+    #       permissions:
+    #         - level: "CAN_MANAGE"
+    #           group_name: "PowerUsers"
+
+# Global variables (can be overridden per target above)
+variables:
+  catalog_name:
+    description: "Name of the Unity Catalog to use"
+    default: "your_dev_catalog"
+
+  schema_name:
+    description: "Name of the schema within the catalog"
+    default: "your_schema"
+
+  environment:
+    description: "Environment name (dev/prod)"
+    default: "dev"

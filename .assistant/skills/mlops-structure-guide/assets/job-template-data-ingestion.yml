@@ -1,0 +1,59 @@
+resources:
+  jobs:
+    data_ingestion_job:
+      name: "1 - Data Ingestion Job - ${var.environment}"
+      description: "Job to ingest data from source into Unity Catalog feature table"
+
+      # TODO: Set up email notifications on failure
+      # email_notifications:
+      #   on_failure:
+      #     - "your.team@company.com"
+      #   no_alert_for_skipped_runs: false
+
+      # Job parameters sourced from bundle variables
+      parameters:
+        - name: "catalog_name"
+          default: "${var.catalog_name}"
+        - name: "schema_name"
+          default: "${var.schema_name}"
+
+      # Optional: Define shared job cluster (uncomment to use)
+      # If commented out, defaults to serverless compute
+      # job_clusters:
+      #   - job_cluster_key: "ingestion_cluster"
+      #     new_cluster:
+      #       autoscale:
+      #         min_workers: 1
+      #         max_workers: 4
+      #       spark_version: "15.4.x-scala2.12"
+      #       node_type_id: "i3.xlarge"
+      #       custom_tags:
+      #         Environment: "${var.environment}"
+      #         Project: "your_project_name"  # TODO: Change project name
+      #         Purpose: "data-ingestion"
+
+      # Job tasks
+      tasks:
+        - task_key: "ingest_data"
+          description: "Ingest data into Unity Catalog"
+
+          # Optional: Reference the shared job cluster
+          # job_cluster_key: "ingestion_cluster"
+
+          # Notebook task
+          notebook_task:
+            # TODO: Update notebook path if your data ingestion notebook is in a different location
+            notebook_path: "../notebooks/1_data_preprocessing/data_ingestion.py"
+            base_parameters:
+              catalog_name: "{{job.parameters.catalog_name}}"
+              schema_name: "{{job.parameters.schema_name}}"
+
+      # Timeout and retry settings
+      timeout_seconds: 3600  # 1 hour
+      max_concurrent_runs: 1
+
+      # Tags for organization and filtering
+      tags:
+        Environment: "${var.environment}"
+        Project: "your_project_name"  # TODO: Change project name
+        Stage: "ingestion"
