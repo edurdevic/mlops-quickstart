@@ -42,12 +42,12 @@ print(f"Model version: {model_version}")
 import mlflow
 import mlflow.sklearn
 
-# Get current user
-username = spark.sql("SELECT current_user()").collect()[0][0].split("@")[0]
+# Get current user email
+user_email = spark.sql("SELECT current_user()").collect()[0][0]
 
 # Set experiment to user-scoped path to avoid collisions
 # TODO: Change "iris_model" to your model name
-experiment_path = f"/{username}/iris_model_{catalog_name}"
+experiment_path = f"/Users/{user_email}/iris_model_{catalog_name}"
 mlflow.set_experiment(experiment_path)
 
 print(f"MLflow experiment: {experiment_path}")
