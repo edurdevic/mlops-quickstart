@@ -45,7 +45,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your inference notebook is in a different location
-            notebook_path: "../notebooks/3_inference/batch_inference.ipynb"
+            notebook_path: "../notebooks/3_inference/batch_inference.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"

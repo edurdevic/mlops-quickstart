@@ -43,7 +43,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your data ingestion notebook is in a different location
-            notebook_path: "../notebooks/1_data_preprocessing/data_ingestion.ipynb"
+            notebook_path: "../notebooks/1_data_preprocessing/data_ingestion.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"

@@ -50,7 +50,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your training notebook is in a different location
-            notebook_path: "../notebooks/2_model_training_and_deployment/model_training.ipynb"
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_training.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"

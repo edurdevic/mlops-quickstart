@@ -48,7 +48,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your evaluation notebook is in a different location
-            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/1_model_evaluation.ipynb"
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/1_model_evaluation.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"
@@ -67,7 +67,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your approval notebook is in a different location
-            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/2_model_approval.ipynb"
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/2_model_approval.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"
@@ -86,7 +86,7 @@ resources:
           # Notebook task
           notebook_task:
             # TODO: Update notebook path if your deployment notebook is in a different location
-            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/3_model_deployment.ipynb"
+            notebook_path: "../notebooks/2_model_training_and_deployment/model_deployment/3_model_deployment.py"
             base_parameters:
               catalog_name: "{{job.parameters.catalog_name}}"
               schema_name: "{{job.parameters.schema_name}}"
