@@ -1,9 +1,6 @@
 bundle:
   name: your_project_name  # TODO: Change to your project name
 
-  # Optionally set version and minimum CLI version
-  version: "0.1.0"
-
 # Include all job YAML files from the resources directory
 include:
   - resources/*.yml
